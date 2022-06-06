@@ -1,5 +1,14 @@
 \documentclass[a4paper, conference]{ieeeconf}
 \usepackage{graphicx}
+\usepackage{color, colortbl}
+\usepackage{float}
+
+\hyphenpenalty=10000
+\renewcommand{\arraystretch}{1.25}
+\definecolor{pale_yellow}{rgb}{1, 0.92, 0.673}
+\definecolor{dark_blue}{rgb}{0.9, 0.9, 1}
+\definecolor{blue}{rgb}{0.8, 0.8, 1}
+\definecolor{light_blue}{rgb}{0.7, 0.7, 1}
 
 \title{
   \LARGE \bf Resumes Named Entity Recognition with Conditional Random Fields
@@ -13,13 +22,42 @@
 \begin{document}
 
   \maketitle
-  \begin{abstract}
-    We propose Lorem ipsum dolor sit amet, consecteuer
-  \end{abstract} 
+  % \begin{abstract}
+  %   We propose Lorem ipsum dolor sit amet, consecteuer
+  % \end{abstract}
 
   \tableofcontents
 
   \section{Introduction}
+  We are often faced with the debate of humans versus machines, with a lot of
+  people concerned that they will be replaced by robots. However, the goal has
+  always been to strengthen the relationship between automated systems and
+  humans to improve the overall work quality. The objective of this research
+  paper is to provide an automated tool to help Spanish recruiters parse
+  through the large volume of resumes they handle daily.
+
+  There are a lot of existing tools that help recruiters in other languages,
+  such as English, to process candidate resumes. Most commonly known as
+  Applicant Tracking Systems (ATS), these systems help filter through a pool of
+  candidates and provide the best match for a job vacancy. However, these tools
+  are not as widespread in the Spanish language. We decided to take on the
+  challenge of creating something similar to help the development of
+  the area.
+
+  More significantly, we focused on developing a said tool using a lesser-known
+  type of model called Conditional Random Fields (CRF) since it offers great
+  benefits at low computational costs. Other research has shown how these
+  models compare to traditional deep learning methods and it shows a lot of
+  promise. The biggest challenge, however, is being able to capture and convey
+  the nuances of Spanish resumes so that a model can understand how to process
+  them.
+
+  Building tools like this one don't have the objective of displacing people
+  from their jobs, but instead of freeing up their time and effort toward more
+  rewarding tasks. Processing large datasets can be tolling for humans and the
+  best way to combat it is with the help of machines. The future of work is
+  pointed toward collaboration with automated systems and we strive to be part
+  of it.
 
   \section{Literature Review}
   \subsection{Named Entity Recognition (NER)}
@@ -55,7 +93,7 @@
   different observations without having to increase model complexity. This
   property also allows the model to consider past and future tokens for the
   probabilistic prediction of the current token \cite{Lafferty2001}.
-  \begin{figure}[h]
+  \begin{figure}[ht!]
     \centering
     \includegraphics[width=\columnwidth]{hmm_vs_crf.png}
     \caption{%
@@ -65,7 +103,7 @@
     }
   \end{figure}
 
-  Most
+  % \subsubsection{Linear-chain CRF}
 
   \section{Related Work} Resumes fall into the category of semi-structured
   documents. This characteristic poses a challenge for traditional parsing
@@ -180,15 +218,631 @@
   research to create these tools for Spanish-speaking countries.
 
   \section{Solution}
-  \section{Evaluation}
-  \section{Results}
-  \section{Conclusions}
-  \section{Future Work}
-  \begin{itemize}
-    \item Unsupervised CRF features
-  \end{itemize}
-  \subsection{Text Embedding}
+  The most viable solution to this problem is using Conditional Random Fields
+  (CRF) to extract the essential information from candidates' resumes. Compared
+  to the training time and complexity of deep learning methods, CRFs are
+  quicker and simpler to implement. The key to building a robust CRF is
+  choosing the right features and having a large enough dataset. In comparison,
+  Conditional Random Fields are more flexible allowing the model to find
+  relationships between sequences even if they are not immediately next to each
+  other. These characteristics and the research so far suggest that these
+  models will yield good results when parsing resumes, regardless of the
+  language.
 
-  \bibliographystyle{ieeetr} \bibliography{library}
+  It is difficult to settle on a fixed sequence size to analyze each step of
+  the CRF training. Depending on the field, the candidate, and the template,
+  sequences for the same data can vary greatly. Traditionally, other
+  researchers have used a word per word basis to train their models
+  \cite{Ayishathahira2018a,E*2020}. Having settled on this strategy, we
+  built three different feature sets (see \ref{table:1}, \ref{table:2}, and
+  \ref{table:3}) to train the CRF.
+
+  \begin{table}[ht!]
+    \centering
+    \begin{tabular}{|p{0.4\linewidth}|p{0.5\linewidth}|}
+      \hline
+      \textbf{Feature} & \textbf{Description} \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.istitle & Whether the previous word starts with a capital letter.
+      \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.isdigit & Whether the previous word is an integer. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_year & Whether the previous word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_abbr\_month & Whether the previous word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_full\_month & Whether the previous word is a month's name. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.syllable\_count & How many syllables does the previous word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.lower & The full previous word in lowercase. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.bigram & The previous word concatenated with the current word. \\
+      \hline
+      \rowcolor{blue}
+      word.istitle & Whether the current word starts with a capital letter. \\
+      \hline
+      \rowcolor{blue}
+      word.isdigit & Whether the current word is an integer.\\
+      \hline
+      \rowcolor{blue}
+      word.is\_year & Whether the current word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{blue}
+      word.len & Then length of the current word \\
+      \hline
+      \rowcolor{blue}
+      word.is\_abbr\_month & Whether the current word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{blue}
+      word.is\_full\_month & Whether the current word is a month's name. \\
+      \hline
+      \rowcolor{blue}
+      word.syllable\_count & How many syllables does the current word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{blue}
+      word.has\_at & Whether the current word has an @ symbol. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.istitle & Whether the next word starts with a capital letter. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.isdigit & Whether the next word is an integer. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_year & Whether the current word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_abbr\_month & Whether the next word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_full\_month & Whether the next word is a month's name. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.syllable\_count & How many syllables does the current word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.lower & The full next word in lowercase. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.bigram & The current word concatenated with the next word. \\
+      \hline
+    \end{tabular}
+    \caption{Baseline Features}
+    \label{table:1}
+  \end{table}
+
+  \begin{table}[ht!]
+    \centering
+    \begin{tabular}{|p{0.4\linewidth}|p{0.5\linewidth}|}
+      \hline
+      \textbf{Feature} & \textbf{Description} \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.istitle & Whether the previous word starts with a capital letter.
+      \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.isdigit & Whether the previous word is an integer. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_year & Whether the previous word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_abbr\_month & Whether the previous word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_full\_month & Whether the previous word is a month's name. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.syllable\_count & How many syllables does the previous word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.lower & The full previous word in lowercase. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.bigram & The previous word concatenated with the current word. \\
+      \hline
+      \rowcolor{pale_yellow}
+      -1:word.first\_three & The previous word first three characters \\
+      \hline
+      \rowcolor{pale_yellow}
+      -1:word.last\_three & The previous word last three characters. \\
+      \hline
+      \rowcolor{blue}
+      word.istitle & Whether the current word starts with a capital letter. \\
+      \hline
+      \rowcolor{blue}
+      word.isdigit & Whether the current word is an integer. \\
+      \hline
+      \rowcolor{blue}
+      word.is\_year & Whether the current word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{blue}
+      word.len & Then length of the current word \\
+      \hline
+      \rowcolor{blue}
+      word.is\_abbr\_month & Whether the current word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{blue}
+      word.is\_full\_month & Whether the current word is a month's name. \\
+      \hline
+      \rowcolor{blue}
+      word.syllable\_count & How many syllables does the current word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{blue}
+      word.has\_at & Whether the current word has an @ symbol. \\
+      \hline
+      \rowcolor{pale_yellow}
+      word.first\_three & The current word first three characters \\
+      \hline
+      \rowcolor{pale_yellow}
+      word.last\_three & The current word last three characters. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.istitle & Whether the next word starts with a capital letter. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.isdigit & Whether the next word is an integer. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_year & Whether the current word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_abbr\_month & Whether the next word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_full\_month & Whether the next word is a month's name. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.syllable\_count & How many syllables does the current word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.lower & The full next word in lowercase. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.bigram & The current word concatenated with the next word. \\
+      \hline
+      \rowcolor{pale_yellow}
+      +1:word.first\_three & The next word first three characters \\
+      \hline
+      \rowcolor{pale_yellow}
+      +1:word.last\_three & The next word last three characters. \\
+      \hline
+    \end{tabular}
+    \caption{Head + Tail \\ \textnormal{(Changes marked in yellow)}}
+    \label{table:2}
+  \end{table}
+
+  \begin{table}[ht!]
+    \centering
+    \begin{tabular}{|p{0.4\linewidth}|p{0.5\linewidth}|}
+      \hline
+      \textbf{Feature} & \textbf{Description} \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.istitle & Whether the previous word starts with a capital letter.
+      \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.isdigit & Whether the previous word is an integer. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_year & Whether the previous word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_abbr\_month & Whether the previous word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.is\_full\_month & Whether the previous word is a month's name. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.syllable\_count & How many syllables does the previous word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.lower & The full previous word in lowercase. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.bigram & The previous word concatenated with the current word. \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.first\_three & The previous word first three characters \\
+      \hline
+      \rowcolor{dark_blue}
+      -1:word.last\_three & The previous word last three characters. \\
+      \hline
+      \rowcolor{blue}
+      word.istitle & Whether the current word starts with a capital letter. \\
+      \hline
+      \rowcolor{blue}
+      word.isdigit & Whether the current word is an integer. \\
+      \hline
+      \rowcolor{blue}
+      word.is\_year & Whether the current word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{blue}
+      word.len & Then length of the current word \\
+      \hline
+      \rowcolor{blue}
+      word.is\_abbr\_month & Whether the current word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{blue}
+      word.is\_full\_month & Whether the current word is a month's name. \\
+      \hline
+      \rowcolor{blue}
+      word.syllable\_count & How many syllables does the current word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{blue}
+      word.has\_at & Whether the current word has an @ symbol. \\
+      \hline
+      \rowcolor{blue}
+      word.first\_three & The current word first three characters \\
+      \hline
+      \rowcolor{blue}
+      word.last\_three & The current word last three characters. \\
+      \hline
+      \rowcolor{pale_yellow}
+      word.lower & The full current word in lowercase. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.istitle & Whether the next word starts with a capital letter. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.isdigit & Whether the next word is an integer. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_year & Whether the current word is an integer between 1900
+      and 2100 (inclusive). \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_abbr\_month & Whether the next word is a month's name
+      abbreviation. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.is\_full\_month & Whether the next word is a month's name. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.syllable\_count & How many syllables does the current word have,
+      based on its vowels. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.lower & The full next word in lowercase. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.bigram & The current word concatenated with the next word. \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.first\_three & The next word first three characters \\
+      \hline
+      \rowcolor{light_blue}
+      +1:word.last\_three & The next word last three characters. \\
+      \hline
+    \end{tabular}
+    \caption{Whole Word \\ \textnormal{(Changes marked in yellow)}}
+    \label{table:3}
+  \end{table}
+
+  We built the solution using the Python library, \texttt{sklearn-crfsuite}
+  which is a \texttt{scikit-learn} compatible wrapper for the C++ library
+  \texttt{CRFSuite} \cite{CRFsuite}. The library allows its users to create
+  linear-chain CRFs using multiple training methods such as Limited-memory
+  BFGS (L-BFGS), Stochastic Gradient Descent (SDG), Adaptive Regularization Of
+  Weight Vector (AROW), etc. For this solution, we went with L-BFGS since it
+  allowed us to set L1 and L2 normalization parameters.
+
+  After having designed the model, we added preprocessing steps to feed it
+  data. We parsed each resume into word tokens, eliminating common punctuation
+  points such as periods, commas, question marks, etc. The next step was to
+  calculate the features for each word in the resume as described in the
+  tables (\ref{table:1}, \ref{table:2}, \ref{table:3}). It is important to note
+  that for the first and last word of each sequence features belonging to the
+  previous and next word, respectively, were omitted.
+
+  CRFs are great to predict what is the most likely transition from one
+  tag to another, which is why they are an attractive solution to analyze
+  semi-structured documents such as resumes. Based on this fact and the
+  existing research so far, we believe this is a sufficient solution to address
+  the problem at hand.
+
+  \clearpage
+  \section{Experimentation \& Evaluation}
+  There is a lack of public Spanish datasets with tagged resumes, which means
+  that we had to gather and build our own. First, we needed to collect
+  Spanish resumes and convert them from their original formats to plain text.
+  This can be challenging due to the great diversity of file formats and resume
+  templates. Building a named entity recognition dataset is a laborious
+  task since it means going through each data sample and labeling the sequences
+  by hand. We were able to accomplish this task thanks to the open-source
+  program, Doccano. Doccano provides a graphical interface to label the
+  documents by selecting the text and assigning a label. After labeling each
+  resume, we used the dataset to train the model and evaluate its performance.
+
+  We collected resumes from two main sources: an HR representative at an
+  automotive manufacturing company and Mexico's government representatives'
+  public available resumes. In total, we collected over 90 resumes, of which we
+  could only use 51 due to errors in the text conversion. The resumes comprised
+  different profiles such as engineers, marketers, lawyers, educators, and
+  public servants. Although it would have been ideal to have a larger dataset,
+  we were limited by the available time and resources.
+
+  The dataset was split in a 1:5 ratio for testing and training respectively.
+  This proportion was chosen based on the Pareto Principle and it recurrent
+  relevance in different datasets. It is also a commonly used distribution in
+  computer science applications \cite{Harvey2018}.
+
+  To make the most out of the available data, we decided to use K-fold
+  cross-validation to optimize the model's hyper-parameters (L1 and L2
+  normalization). We used \texttt{scikit-learn} Randomized search with 100
+  iterations of
+  5-fold cross-validation and selected the best model based on the weighted
+  f-score \cite{Pedregosa2011}.
+
+  Since this is a classification problem, we can use different metrics to
+  measure the performance of our model. We can obtain the precision, recall,
+  and f-score by using a confusion matrix. Precision allows us to gauge how
+  often our model correctly predicts the tag for a text sequence. Recall lets
+  us measure how good are the model predictions for the correct class out of
+  all the examples available for said class. F-score will let us relate these
+  previous variables to get a better sense of the robustness of our model.
+  These metrics are popularly used to evaluate classification models and more
+  specifically, these are metrics that have been used in the related work
+  mentioned previously.
+
+  It is important to note that recall is often disregarded in computer
+  linguistics since false positives and false negatives are not as influential
+  as in other fields. Although it serves to paint a general picture of a
+  model's performance, it depends on what is the cost of false predictions. On
+  the other hand, precision is highly regarded as a key metric in machine
+  learning and computational linguistics with the caveat that it doesn't
+  reflect correctly how the model handles false predictions. As a result, the
+  f-score is used as a compromise between these two metrics. The F-measure
+  relates the precision and recall by obtaining their harmonic mean
+  \cite{Powers2020}. This measure is also used as an evaluation metric for
+  other studies and will allow us to compare the performance of the solution to
+  the state of the art.
+
+  \section{Results}
+  After training the model multiple times we obtained thought-provoking
+  results. There are some shared trends across feature sets such as the
+  \textsc{Date} label not having enough samples to achieve significance.
+  Similarly, labels for very specific entities such as \textsc{First\_Name},
+  \textsc{Last\_Name}, and \textsc{Location} have very low recall scores.
+  However, entities with more generic and standardized formats such as
+  \textsc{Email} and \textsc{Phone\_Number} have higher recall scores. These
+  observations are directly linked to the value of the f1-scores, where the
+  lower the recall, the lower the f1-score.
+
+  Consequently, the number of samples available for each label affects greatly
+  its performance. The most obvious example of this is when we compare
+  \textsc{Phone\_Number} and uncategorized (\textsc{nan}) labels. Even though
+  phone numbers have a predictable format, the uncategorized text has a better
+  performance across the board. It becomes evident that when dealing with CRFs
+  we are playing a numbers game rather than a feature engineering game. That's
+  not to say that features don't play a role in these models.
+
+  When we look at the comparison across different feature sets (Figure
+  \ref{figure:2}), we notice that when the amount of samples doesn't vary
+  significantly, features play a large role in performance improvement. The
+  second feature set, Head + Tail, consistently beats the other models in most
+  of the categories. This is even more palpable when we compare the average
+  f1-score where it beats the other models with a value of 41\%. It is
+  important to note that the performance dropped by one decimal point when we
+  added the whole word features. Although more exploration is needed, this may
+  be due to either the difference in total samples between the two feature sets
+  or slight overfitting.
+
+
+  \begin{table}[ht!]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|}
+         \hline
+             & Precision & Recall & F1-score & Support \\
+         \hline
+     COMPANY & 0.55 & 0.30 & 0.39 &  481 \\
+      DEGREE & 0.59 & 0.14 & 0.23 &  365 \\
+ DESIGNATION & 0.82 & 0.21 & 0.34 &  373 \\
+       EMAIL & 1.00 & 0.50 & 0.67 &   10 \\
+    END\_DATE & 0.87 & 0.41 & 0.55 &  185 \\
+  FIRST\_NAME & 0.20 & 0.05 & 0.08 &   19 \\
+   LAST\_NAME & 0.33 & 0.03 & 0.06 &   29 \\
+    LOCATION & 0.62 & 0.04 & 0.07 &  134 \\
+PHONE\_NUMBER & 0.86 & 0.38 & 0.52 &   16 \\
+      SCHOOL & 0.28 & 0.19 & 0.22 &  203 \\
+       SKILL & 0.67 & 0.34 & 0.45 &  436 \\
+  START\_DATE & 0.75 & 0.43 & 0.55 &  175 \\
+         nan & 0.76 & 0.96 & 0.85 & 5836 \\
+         \hline
+
+   Micro Avg. & 0.75 & 0.75 & 0.75 & 8262 \\
+   Macro Avg. & 0.64 & 0.31 & 0.38 & 8262 \\
+Weighted Avg. & 0.73 & 0.75 & 0.70 & 8262 \\
+         \hline
+    \end{tabular}
+    \caption{Baseline Features Results}
+    \label{table:4}
+  \end{table}
+  \begin{table}[ht!]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|}
+         \hline
+             & Precision & Recall & F1-score & Support \\
+         \hline
+     COMPANY & 0.47 & 0.19 & 0.27 &   542 \\
+        DATE & 0.00 & 0.00 & 0.00 &    98 \\
+      DEGREE & 0.51 & 0.18 & 0.26 &   462 \\
+ DESIGNATION & 0.71 & 0.19 & 0.30 &   366 \\
+       EMAIL & 1.00 & 0.95 & 0.98 &    22 \\
+    END\_DATE & 0.76 & 0.23 & 0.35 &   247 \\
+  FIRST\_NAME & 1.00 & 0.18 & 0.30 &    17 \\
+   LAST\_NAME & 1.00 & 0.15 & 0.27 &    26 \\
+    LOCATION & 0.53 & 0.14 & 0.22 &   217 \\
+PHONE\_NUMBER & 0.86 & 0.30 & 0.44 &    20 \\
+      SCHOOL & 0.45 & 0.25 & 0.32 &   365 \\
+       SKILL & 0.59 & 0.41 & 0.48 &   354 \\
+  START\_DATE & 0.89 & 0.50 & 0.64 &   207 \\
+         nan & 0.77 & 0.95 & 0.85 &  7318 \\
+
+         \hline
+    Accuracy &  -  &  -  & 0.75 & 10261 \\
+   Macro Avg. & 0.68 & 0.33 & 0.41 & 10261 \\
+Weighted Avg. & 0.72 & 0.75 & 0.70 & 10261 \\
+         \hline
+    \end{tabular}
+    \caption{Head+Tail Features Results}
+    \label{table:5}
+  \end{table}
+  \begin{table}[ht!]
+    \centering
+    \begin{tabular}{|l|c|c|c|c|}
+         \hline
+             & Precision & Recall & F1-score & Support \\
+         \hline
+     COMPANY & 0.39 & 0.11 & 0.17 &  405 \\
+        DATE & 0.00 & 0.00 & 0.00 &   77 \\
+      DEGREE & 0.24 & 0.17 & 0.20 &  344 \\
+ DESIGNATION & 0.38 & 0.38 & 0.38 &  261 \\
+       EMAIL & 0.92 & 0.79 & 0.85 &   14 \\
+    END\_DATE & 0.91 & 0.55 & 0.69 &  184 \\
+  FIRST\_NAME & 0.00 & 0.00 & 0.00 &   19 \\
+   LAST\_NAME & 0.00 & 0.00 & 0.00 &   27 \\
+    LOCATION & 0.23 & 0.13 & 0.17 &  255 \\
+PHONE\_NUMBER & 0.81 & 0.94 & 0.87 &   18 \\
+      SCHOOL & 0.48 & 0.26 & 0.34 &  360 \\
+       SKILL & 0.58 & 0.33 & 0.42 &  529 \\
+  START\_DATE & 0.65 & 0.45 & 0.53 &  161 \\
+         nan & 0.78 & 0.92 & 0.85 & 6421 \\
+         \hline
+    Accuracy &  -  &   -  & 0.73 & 9075 \\
+   Macro Avg. & 0.45 & 0.36 & 0.39 & 9075 \\
+Weighted Avg. & 0.68 & 0.73 & 0.69 & 9075 \\
+         \hline
+    \end{tabular}
+    \caption{Whole Word Features Results}
+    \label{table:6}
+  \end{table}
+
+  \begin{figure}[ht!]
+    \centering
+    \includegraphics[width=\columnwidth]{comparison_chart.png}
+    \caption{%
+      Comparison of f1-score values for each label across the different feature
+      sets.
+    }
+    \label{figure:2}
+  \end{figure}
+
+  \medskip
+  In table \ref{table:7}, we can see a comparison between previously done
+  research and our solution. In contrast, the current solution cannot boast
+  great performance, but this is due to factors such as the dataset size and
+  feature engineering. Even though the f1-score of the solution is half of
+  the other works, it is important to remember that the model has a decent
+  performance when it comes to a binary classification of essential and
+  nonessential information. Across all the feature sets, the model achieved an
+  85\% f1-score for uncategorized data.
+  \begin{table}[H]
+    \centering
+    \begin{tabular}{|l|r|}
+         \hline
+         \textbf{Study/Research} & \textbf{Avg. F1-score} \\
+         \hline
+             Ayishathahira et. al (2018) \cite{Ayishathahira2018a} & 83.7\% \\
+             E, Suhas \& E, Manjunath (2020) \cite{E*2020} & 81\% \\
+             Copara et. al (2016) \cite{Copara2016} & 82.44\% \\
+         \hline
+             \textbf{Current solution} & \textbf{41\%} \\
+         \hline
+    \end{tabular}
+    \caption{Whole Word Features Results}
+    \label{table:7}
+  \end{table}
+
+  \section{Conclusions}
+  Natural Language Processing is one of the most challenging tasks when it
+  comes to artificial intelligence. However, that doesn't mean that there is no
+  way to surmount these challenges. With a large enough dataset, it is easier
+  for the model to detect certain patterns in our language. Alternatively, this
+  kind of model benefits from access to a specific database for skills, names,
+  and other proper nouns. Even without these benefits, this CRF is a great
+  fundamental step in the right direction for processing resumes automatically. 
+
+  The amount of quality data available is one of the most important parts of
+  training any kind of model. In previous works, we have seen the best
+  performance when the most amount of data is available. For instance,
+  Ayishathahira et. al \cite{Ayishathahira2018a} had a dataset of 800 curated
+  resumes and they were able to beat traditional deep learning methods with
+  their CRF model. Even when we look at the different feature sets, the one
+  with the best performance is also the one with the most amount of samples.
+  This project can be taken a step further by collecting a large Spanish resume
+  dataset. This would allow the CRF model to better understand certain nuances
+  of our natural language.
+
+  It would have been beneficial to have auxiliary datasets with common
+  instances of certain entities. E, Suhas & E, Manjunath \cite{E*2020} were
+  able to feed a database of known skills to their CRF and as a result, it
+  improved the model's performance. In our case, the model would have benefited
+  from a database of common Spanish names to increase its performance in
+  detecting people's names. The same could have been done if the model was
+  trained for a more geographically restricted zone. For some entities, it is
+  necessary to have the extra context to help the model learn better.
+
+  Regardless of the shortcomings, this model is a great basis for further work
+  in the area. Since the model is good at discriminating essential resume
+  information, it would already serve as a great tool to reduce the volume of
+  data that recruiters and other HR representatives have to parse through. It
+  could even be used as part of a parsing pipeline where its output is fed into
+  another model to further refine the results. There is a lot of room for
+  improvement but we can at least be sure that we are pointing in the correct
+  direction.
+
+  There is a lot to gain from teaching computers to understand our language.
+  The delegation of tedious and time-consuming work to automated models can
+  free people to invest time in more complex and rewarding tasks. This project
+  aimed to create a tool that could help people ease their workload, and to
+  some extent, we were able to achieve that goal. We can only hope that, based
+  on this research, others can build even more powerful tools and improve the
+  collaboration between humans and automated systems. 
+  % \section{Future Work}
+  % \begin{itemize}
+  %   \item Unsupervised CRF features
+  % \end{itemize}
+  % \subsection{Text Embedding}
+
+  \bibliographystyle{ieeetr}
+  \bibliography{library, other}
+
 
 \end{document}
