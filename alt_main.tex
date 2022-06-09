@@ -1,0 +1,275 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thesis LaTeX Template Modified by Ng for the Tesina Course
+% Version 1.2 (05/24/2018)
+% Note:
+% Make sure to include the Thesis.cls  file in the folder
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[11pt, a4paper, oneside]{thesis} % paper size redifined in Thesis.cls
+\usepackage[square, numbers, comma, sort&compress]{natbib}
+\usepackage[nodayofweek]{datetime}
+\usepackage{float}
+\usepackage{color, colortbl}
+\hyphenpenalty=10000
+\renewcommand{\arraystretch}{1.25}
+\definecolor{pale_yellow}{rgb}{1, 0.92, 0.673}
+\definecolor{dark_blue}{rgb}{0.9, 0.9, 1}
+\definecolor{blue}{rgb}{0.8, 0.8, 1}
+\definecolor{light_blue}{rgb}{0.7, 0.7, 1}
+\usepackage{array}
+\usepackage{wrapfig}
+\usepackage{pdfpages}
+\usepackage[utf8]{inputenc}  % Ng Edit for accents in spanish
+\usepackage[english]{babel}
+\hypersetup{urlcolor=blue, colorlinks=false}
+\title{\ttitle}
+\thesistitle{tesina ISC}
+\begin{document}
+\frontmatter
+\setstretch{1.3}
+
+\fancyhead{}
+\rhead{\thepage}
+\lhead{}
+
+\pagestyle{fancy}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+% PDF meta-data
+\hypersetup{pdftitle={\ttitle}}
+\hypersetup{pdfsubject=\subjectname}
+%\hypersetup{pdfauthor=\authornames}
+\hypersetup{pdfkeywords=\keywordnames}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\begin{titlepage}
+\begin{center}
+
+\textsc{\Large \univname}\\
+\textsc{\Large \facname}\\
+\textsc{\Large \schoolname}\\[1cm]
+\includegraphics[scale=.3]{logo.png} \\
+\centering{\Large \bfseries Spanish Resumes Named Entity Recognition with \\
+Conditional Random Fields}\\[0.5cm]
+
+\large by\\[0.5cm]
+
+\begin{minipage}{0.4\textwidth}
+\begin{center} \large
+\authors{Juan Alejandro Alcántara Minaya}
+\large{\href{mailto:A01703947@exatec.tec.mx?subject=Awesome thesis, man!}{\authornames}} 
+\\[0.5cm] 
+\end{center}
+\end{minipage}\\[0.5cm]
+
+\large Proyecto Integrador para el Desarrollo de Soluciones Empresariales \\ \textit{\degreename}\\[0.8cm]
+
+\begin{table}[!h]
+\begin{center}
+\begin{tabular}{lll}
+\multicolumn{1}{r}{Advisor:} & Dr. Benjamín Valdés \\  %modificame nombre de tu asesor
+\end{tabular}
+\end{center}
+\end{table}
+
+\vspace{3cm}
+Santiago de Querétaro, Querétaro, México \\
+
+{\large \longdate{08/06/2022}}\\[1.5cm]%modificame fecha de la tesina
+%This document represents a work in progress. The statements and information reported here \textit{may be} artistic works of fiction and fantasy.
+\vfill
+\end{center}
+
+\end{titlepage}
+
+
+\clearpage % Start a new page
+
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+
+\pagestyle{empty} % No headers or footers for the following pages%
+\null\vfill
+
+\begin{center}
+\textit{"Some people call this artificial intelligence, but the reality is this
+technology will enhance us. So instead of artificial intelligence, I think
+we’ll augment our intelligence."}
+\end{center}
+
+\begin{flushright}
+Ginni Rometty
+\end{flushright}
+
+\vfill\vfill\vfill\vfill\vfill\vfill\null 
+
+\clearpage
+
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\setstretch{1.3} % Reset the line-spacing to 1.3 for body text (if it has changed)
+
+\acknowledgements{\addtocontents{toc}{\vspace{1em}}  %modificame tus agradecimientos van aquí solo si quieres sino puedes borrar la sección
+This thesis is the culmination of years of hard work, difficult decisions,
+and obstacles on the road. I must thank the people that helped me through it
+and immortalize them for their contributions.
+\vskip 30pt
+
+I thank all my teachers and staff members at ITESM for creating a learning
+environment where I could learn from my mistakes and grow stronger along with
+my peers. Thank you for not giving up on your students.
+\vskip 30pt
+
+I thank my friends and family for all the sweat and tears shared to get me to
+where I am today. Thank you for letting me talk your ears off about my niche
+topics and for supporting my dreams. Thank you, Carmelina and Paty, for all
+your hard work put into this thesis.
+\vskip 30pt
+
+Finally, I would like to thank my father for teaching me the value of a
+fulfilling education, what are the priorities in life, and the values that
+maketh a man.
+}
+\clearpage % Start a new page
+
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\addtotoc{Abstract} % Add the "Abstract" page entry to the Contents
+
+ 
+
+\abstract{\addtocontents{toc}{\vspace{1em}} %modificame 
+	With the growth of the digital age, many traditional recruiting methods are
+	becoming obsolete. Long gone are the days when you would walk up to an office
+	and deposit your printed-out resumes. Today, resumes are submitted digitally
+	through a myriad of different platforms. With the ease of submission came the
+	volume growth. As a result, we have developed tools to help recruiters parse
+	through the large pool of candidates. Researchers created these tools for the
+	English language; however, much remains to be done for Spanish. Our objective
+	is to build an automated tool that helps recruiters extract essential
+	information from a resume and reduce the amount of data. We based our
+	approach on the Conditional Random Fields probabilistic model. We tested
+	three different feature sets against a small sample of Spanish resumes and
+	discovered riveting data patterns. These findings helped us generate a
+	contribution to the field, and at the end of this paper, we explore its
+	implications.
+
+\clearpage
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\pagestyle{fancy}
+
+%\lhead{\emph{List of Figures}} % Set the left side page header to "List of Figures"
+%\listoffigures % Write out the List of Figures
+
+%\lhead{\emph{List of Tables}} % Set the left side page header to "List of Tables"
+%\listoftables % Write out the List of Tables
+
+\lhead{\emph{Contents}} % Set the left side page header to "Contents"
+\tableofcontents % Write out the Table of Contents
+
+%----------------------------------------------------------------------------------------
+%	ABBREVIATIONS
+%----------------------------------------------------------------------------------------
+
+\clearpage
+\setstretch{1.5}
+
+\lhead{\emph{Acronyms}} % Set the left side page header to "Abbreviations"
+\listofsymbols{ll} % Include a list of Abbreviations (a table of two columns)
+{
+\textbf{NLP} & \textbf{N}atural \textbf{L}anguage \textbf{P}rocessing \\
+\textbf{NER} & \textbf{N}amed \textbf{E}ntity \textbf{R}ecognition \\
+\textbf{CRF} & \textbf{C}onditional \textbf{R}andom \textbf{F}ields \\
+\textbf{HMM} & \textbf{H}idden \textbf{M}arkov \textbf{M}odels \\
+\textbf{POS} & \textbf{P}art \textbf{O}f \textbf{S}peech \\
+}
+
+%----------------------------------------------------------------------------------------
+%	PHYSICAL CONSTANTS/OTHER DEFINITIONS
+%----------------------------------------------------------------------------------------
+
+%\clearpage
+
+%\lhead{\emph{Physical Constants}} % Set the left side page header to "Physical Constants"
+
+%\listofconstants{lrcl} % Include a list of Physical Constants (a four column table)
+%{
+%Speed of Light & $c$ & $=$ & $2.997\ 924\ 58\times10^{8}\ \mbox{ms}^{-\mbox{s}}$ (exact)\\
+%}
+
+%----------------------------------------------------------------------------------------
+%	SYMBOLS
+%----------------------------------------------------------------------------------------
+
+%\clearpage
+
+%\lhead{\emph{Variables and Symbols}} % Set the left side page header to "Symbols"
+
+%\listofnomenclature{lll} % Include a list of Symbols (a three column table)
+%{
+%$a$ & distance & m \\
+%$P$ & power & W (Js$^{-1}$) \\
+% Symbol & Name & Unit \\
+
+%& & \\ % Gap to separate the Roman symbols from the Greek
+
+%$\omega$ & angular frequency & rads$^{-1}$ \\
+% Symbol & Name & Unit \\
+%}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Begin page numbering
+
+\pagestyle{fancy}
+
+% Include the chapters of the thesis as separate files from the Chapters folder
+
+\input{capitulos}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\addtocontents{toc}{\vspace{2em}}
+
+\appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
+
+% Include the appendices of the thesis as separate files from the Appendices folder
+
+
+% \input{apendices}  %modificame si not tienens apendices comenta esta linea
+
+\addtocontents{toc}{\vspace{2em}}
+
+\backmatter
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+\label{Bibliography}
+
+\lhead{\emph{Bibliography}}
+\bibliographystyle{unsrt}
+\bibliography{library, other}
+\end{document}
